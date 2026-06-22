@@ -5,10 +5,14 @@ metadata:
   namespace: argocd
 spec:
   generators:
-    - clusters:
-        selector:
-          matchLabels:
-            upgrade-wave: "0"
+    - git:
+        repoURL: https://github.com/abrahamberg/fleet-gitops.git
+        revision: main
+        files:
+          - path: clusters/*.yaml
+      selector:
+        matchLabels:
+          upgradeWave: "0"
   template:
     metadata:
       name: '{{name}}-wave-demo'
