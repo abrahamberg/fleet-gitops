@@ -1,0 +1,6 @@
+resources:
+  - ../../base
+
+commonLabels:
+  environment: prod
+  managed-by: argocd
