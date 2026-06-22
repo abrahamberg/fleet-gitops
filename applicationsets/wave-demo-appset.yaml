@@ -1,0 +1,29 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: wave-demo
+  namespace: argocd
+spec:
+  generators:
+    - clusters:
+        selector:
+          matchLabels:
+            upgrade-wave: "0"
+  template:
+    metadata:
+      name: '{{name}}-wave-demo'
+    spec:
+      project: default
+      source:
+        repoURL: https://github.com/argoproj/argocd-example-apps.git
+        targetRevision: HEAD
+        path: guestbook
+      destination:
+        server: '{{server}}'
+        namespace: wave-demo
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+        syncOptions:
+          - CreateNamespace=true
