@@ -1,0 +1,5 @@
+name: prod
+server: https://172.18.0.4:6443
+environment: prod
+upgradeWave: "1"
+region: local
