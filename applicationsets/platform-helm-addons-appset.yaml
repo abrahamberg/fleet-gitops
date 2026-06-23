@@ -51,7 +51,9 @@ spec:
                   repoURL: https://kubernetes-sigs.github.io/metrics-server
                   targetRevision: 3.12.1
                   syncWave: "4"
-                  values: ""
+                  values: |-
+                    args:
+                      - --kubelet-insecure-tls
                 - addon: kube-prometheus-stack
                   namespace: observability
                   chart: kube-prometheus-stack
