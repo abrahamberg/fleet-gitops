@@ -1,10 +1,12 @@
-# Tenant Namespace GitOps
+# Tenant Namespace Requests
 
-Users create, update, and delete tenant namespaces by opening a pull request against this folder. Use one file per namespace.
+This folder is the user-facing namespace catalog. A product team requests a namespace by adding or changing one YAML file here.
 
-Request files should follow `schema.json`. In a production repository, validate this schema in CI before merging namespace changes.
+Use this model when you want developers to request namespaces without learning the platform's Helm, Kyverno, and ApplicationSet internals.
 
-Example:
+## Request Format
+
+Use one file per namespace. The example request is [product-a.yaml](product-a.yaml):
 
 ```yaml
 namespace:
@@ -21,10 +23,40 @@ namespace:
   purpose: product workloads
 ```
 
-The `tenant-namespaces` ApplicationSet reads these files, combines them with `clusters/*.yaml`, and renders the local `charts/tenant-namespace` Helm chart. A namespace is created only on clusters whose `environment` appears in `namespace.env`.
+[schema.json](schema.json) describes the expected shape. In a production repo, validate it in CI before merging.
 
-Custom policy settings go under `namespace.policies`. The tenant namespace Helm chart turns those settings into labels, and Kyverno policies match those labels. For example, `podSecurity: restricted` adds `fleet.gitops/policy-pod-security: restricted` to the namespace, then Kyverno adds the matching Kubernetes Pod Security Admission labels.
+## Field Reference
 
-When a request file is merged, Argo CD creates or updates the namespace in the matching clusters. Removing an environment from `namespace.env` prunes the namespace from that environment. When the request file is removed from `main`, the generated Argo CD Applications are removed and their finalizers prune the namespace resources.
+| Field | Meaning | Example |
+| --- | --- | --- |
+| `namespace.name` | Kubernetes namespace name to create. | `product-a` |
+| `namespace.env` | Environments where the namespace should exist. | `dev`, `prod` |
+| `namespace.owner` | Team or group responsible for the namespace. | `product-team` |
+| `namespace.requestedBy` | Person, team, or system that requested it. | `product-team` |
+| `namespace.labels` | Extra tenant labels. The chart writes them as `fleet.gitops/<label>: "true"`. | `product-group-a` |
+| `namespace.policies.podSecurity` | Requested Kubernetes Pod Security profile. | `baseline` or `restricted` |
+| `namespace.purpose` | Short human reason for the namespace. | `product workloads` |
 
-Deleting a namespace deletes the workloads and resources inside it. In production, protect this folder with pull request reviews and branch protection.
+## How It Becomes A Namespace
+
+1. [../../applicationsets/tenant-namespaces-appset.yaml](../../applicationsets/tenant-namespaces-appset.yaml) reads every cluster file and every namespace request file.
+2. The ApplicationSet matrix creates one generated Application per cluster and request.
+3. Each generated Application renders [../../charts/tenant-namespace](../../charts/tenant-namespace/).
+4. [../../charts/tenant-namespace/templates/namespace.yaml](../../charts/tenant-namespace/templates/namespace.yaml) creates a Namespace only when the cluster environment appears in `namespace.env`.
+5. The chart adds labels such as `fleet.gitops/type: tenant`, `fleet.gitops/environment`, and `fleet.gitops/policy-pod-security`.
+6. Kyverno policies under [../../addons/kyverno-policies/](../../addons/kyverno-policies/) match those labels and generate guardrails.
+
+For the full flow, read [../../docs/tenant-namespace-flow.md](../../docs/tenant-namespace-flow.md).
+
+## Change Behavior
+
+| Change | Result |
+| --- | --- |
+| Add `dev` to `namespace.env` | The namespace is created on dev clusters. |
+| Add `prod` to `namespace.env` | The namespace is created on prod clusters. |
+| Remove an environment from `namespace.env` | Argo CD prunes the generated namespace resources from that environment. |
+| Delete the request file | The generated Applications are removed, and their finalizers prune the managed namespace resources. |
+
+## Deletion Warning
+
+Deleting a namespace deletes workloads and resources inside that namespace. Protect this folder with pull request reviews, CODEOWNERS, and branch protection in any real team setup.
