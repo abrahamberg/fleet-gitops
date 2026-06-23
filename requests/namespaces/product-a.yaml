@@ -1,0 +1,10 @@
+namespace:
+  name: product-a
+  env:
+    - dev
+    - prod
+  owner: product-team
+  requestedBy: product-team
+  labels:
+    - product-group-a
+  purpose: product workloads

@@ -1,0 +1,61 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: tenant-namespaces
+  namespace: argocd
+spec:
+  goTemplate: true
+  generators:
+    - matrix:
+        generators:
+          - git:
+              repoURL: https://github.com/abrahamberg/fleet-gitops.git
+              revision: main
+              pathParamPrefix: cluster
+              files:
+                - path: clusters/*.yaml
+          - git:
+              repoURL: https://github.com/abrahamberg/fleet-gitops.git
+              revision: main
+              pathParamPrefix: namespaceRequest
+              files:
+                - path: requests/namespaces/*.yaml
+  template:
+    metadata:
+      name: '{{ .name }}-tenant-{{ .namespace.name }}'
+      finalizers:
+        - resources-finalizer.argocd.argoproj.io
+    spec:
+      project: default
+      source:
+        repoURL: https://github.com/abrahamberg/fleet-gitops.git
+        targetRevision: main
+        path: charts/tenant-namespace
+        helm:
+          releaseName: 'tenant-{{ .namespace.name }}'
+          values: |-
+            cluster:
+              environment: '{{ .environment }}'
+            namespace:
+              name: '{{ .namespace.name }}'
+              owner: '{{ .namespace.owner }}'
+              requestedBy: '{{ .namespace.requestedBy }}'
+              purpose: '{{ .namespace.purpose }}'
+              env:
+              {{ range .namespace.env }}
+                - '{{ . }}'
+              {{ end }}
+              labels:
+              {{ range .namespace.labels }}
+                - '{{ . }}'
+              {{ end }}
+      destination:
+        server: '{{ .server }}'
+        namespace: default
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+          allowEmpty: true
+        syncOptions:
+          - PrunePropagationPolicy=foreground
