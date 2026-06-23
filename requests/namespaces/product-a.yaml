@@ -7,4 +7,6 @@ namespace:
   requestedBy: product-team
   labels:
     - product-group-a
+  policies:
+    podSecurity: restricted
   purpose: product workloads

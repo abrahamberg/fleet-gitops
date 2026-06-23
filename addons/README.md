@@ -12,6 +12,7 @@ Included add-ons:
 - `metrics-server` for Kubernetes resource metrics.
 - `kube-prometheus-stack` for observability with Prometheus, Alertmanager, and Grafana.
 - `kyverno` for policy as code.
+- `kyverno-policies` for tenant namespace guardrails generated per environment.
 
 Platform-cluster observability:
 

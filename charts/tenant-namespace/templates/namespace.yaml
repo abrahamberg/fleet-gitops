@@ -8,6 +8,11 @@ metadata:
     fleet.gitops/environment: {{ .Values.cluster.environment | quote }}
     fleet.gitops/owner: {{ .Values.namespace.owner | quote }}
     fleet.gitops/type: tenant
+    {{ with .Values.namespace.policies }}
+    {{ with .podSecurity }}
+    fleet.gitops/policy-pod-security: {{ . | quote }}
+    {{ end }}
+    {{ end }}
     {{ range .Values.namespace.labels }}
     fleet.gitops/{{ . }}: "true"
     {{ end }}

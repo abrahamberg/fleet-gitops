@@ -9,3 +9,5 @@ namespace:
   env:
     - dev
   labels: []
+  policies:
+    podSecurity: baseline

@@ -23,6 +23,8 @@ spec:
   template:
     metadata:
       name: '{{ .name }}-tenant-{{ .namespace.name }}'
+      annotations:
+        argocd.argoproj.io/sync-wave: "7"
       finalizers:
         - resources-finalizer.argocd.argoproj.io
     spec:
@@ -48,6 +50,12 @@ spec:
               labels:
               {{ range .namespace.labels }}
                 - '{{ . }}'
+              {{ end }}
+              policies:
+              {{ with .namespace.policies }}
+                {{ with .podSecurity }}
+                podSecurity: '{{ . }}'
+                {{ end }}
               {{ end }}
       destination:
         server: '{{ .server }}'

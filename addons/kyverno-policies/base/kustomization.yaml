@@ -1,0 +1,3 @@
+resources:
+  - tenant-default-network-policy.yaml
+  - tenant-pod-security-profile.yaml

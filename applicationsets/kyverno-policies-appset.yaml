@@ -1,0 +1,36 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: kyverno-policies
+  namespace: argocd
+spec:
+  generators:
+    - git:
+        repoURL: https://github.com/abrahamberg/fleet-gitops.git
+        revision: main
+        files:
+          - path: clusters/*.yaml
+  template:
+    metadata:
+      name: '{{name}}-kyverno-policies'
+      annotations:
+        argocd.argoproj.io/sync-wave: "6"
+      labels:
+        environment: '{{environment}}'
+        platform-addon: kyverno-policies
+        region: '{{region}}'
+    spec:
+      project: default
+      source:
+        repoURL: https://github.com/abrahamberg/fleet-gitops.git
+        targetRevision: main
+        path: addons/kyverno-policies/overlays/{{environment}}
+      destination:
+        server: '{{server}}'
+        namespace: kyverno
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+        syncOptions:
+          - ServerSideApply=true
