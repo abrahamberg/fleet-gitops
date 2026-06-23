@@ -13,6 +13,7 @@ Included add-ons:
 - `kube-prometheus-stack` for per-cluster Prometheus and Alertmanager. Grafana is disabled here because central Grafana runs only on the platform cluster.
 - `kyverno` for policy as code.
 - `kyverno-policies` for tenant namespace guardrails generated per environment.
+- `observability-agent` for per-cluster log collection with Grafana Alloy.
 
 Platform-cluster observability:
 

@@ -7,6 +7,7 @@ It shows how to manage:
 - Cluster inventory from `clusters/*.yaml`.
 - Platform namespaces and platform add-ons across every cluster.
 - Central platform-cluster observability with Grafana and Loki.
+- Per-cluster observability agents for workload log collection.
 - Tenant namespace requests from a simple user-facing YAML format.
 - Kyverno policies that react to namespace request settings.
 - Sample applications generated from the same cluster inventory.
@@ -15,7 +16,7 @@ It shows how to manage:
 
 - `root-app.yaml` bootstraps the app-of-apps entry point.
 - `applicationsets/` contains Argo CD AppProjects, Applications, and ApplicationSets.
-- `clusters/` defines target cluster metadata such as `name`, `server`, `environment`, `region`, and `upgradeWave`.
+- `clusters/` defines target cluster metadata such as `name`, `server`, `environment`, `region`, `upgradeWave`, and telemetry endpoints.
 - `addons/` contains Kustomize add-ons and policy overlays.
 - `charts/` contains local Helm charts used by Argo CD.
 - `requests/namespaces/` is the user-facing tenant namespace catalog.
@@ -30,6 +31,7 @@ It shows how to manage:
 5. Helm add-ons install shared services such as cert-manager, ingress-nginx, external-secrets, metrics-server, kube-prometheus-stack, and Kyverno on each workload cluster. The fleet kube-prometheus-stack disables Grafana.
 6. Kyverno policy overlays sync after Kyverno is installed.
 7. Tenant namespace Applications render `charts/tenant-namespace` from files in `requests/namespaces/*.yaml`.
+8. Observability agents run on workload clusters and ship pod logs to platform Loki.
 
 ## Observability Topology
 
@@ -73,3 +75,5 @@ Kyverno policies match those labels and generate or mutate namespace-scoped reso
 This repo is intentionally readable for learning. Before using the pattern in production, add branch protection and CODEOWNERS for `requests/namespaces/`, validate request files in CI, review chart values for each platform add-on, and make namespace deletion an explicit reviewed operation.
 
 See `docs/tenant-namespace-flow.md` for the namespace request design rationale.
+
+See `docs/telemetry-collection.md` for the logs and metrics collection model.

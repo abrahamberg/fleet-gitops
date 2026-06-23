@@ -11,6 +11,11 @@ metadata:
 apiVersion: v1
 kind: Namespace
 metadata:
+  name: observability-agents
+---
+apiVersion: v1
+kind: Namespace
+metadata:
   name: ingress-system
 ---
 apiVersion: v1

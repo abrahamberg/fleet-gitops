@@ -3,3 +3,4 @@ server: https://172.18.0.3:6443
 environment: dev
 upgradeWave: "0"
 region: local
+lokiEndpoint: http://loki-gateway.observability.svc.cluster.local/loki/api/v1/push

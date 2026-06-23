@@ -1,0 +1,97 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: observability-agents
+  namespace: argocd
+spec:
+  generators:
+    - git:
+        repoURL: https://github.com/abrahamberg/fleet-gitops.git
+        revision: main
+        files:
+          - path: clusters/*.yaml
+  template:
+    metadata:
+      name: '{{name}}-observability-agent'
+      annotations:
+        argocd.argoproj.io/sync-wave: "8"
+      labels:
+        environment: '{{environment}}'
+        platform-addon: observability-agent
+        region: '{{region}}'
+    spec:
+      project: fleet-platform
+      source:
+        repoURL: https://grafana.github.io/helm-charts
+        chart: alloy
+        targetRevision: 0.9.2
+        helm:
+          releaseName: alloy
+          values: |-
+            controller:
+              type: daemonset
+
+            alloy:
+              mounts:
+                varlog: true
+                dockercontainers: true
+              configMap:
+                content: |-
+                  logging {
+                    level  = "info"
+                    format = "logfmt"
+                  }
+
+                  discovery.kubernetes "pods" {
+                    role = "pod"
+                  }
+
+                  discovery.relabel "pod_logs" {
+                    targets = discovery.kubernetes.pods.targets
+
+                    rule {
+                      source_labels = ["__meta_kubernetes_namespace"]
+                      target_label  = "namespace"
+                    }
+
+                    rule {
+                      source_labels = ["__meta_kubernetes_pod_name"]
+                      target_label  = "pod"
+                    }
+
+                    rule {
+                      source_labels = ["__meta_kubernetes_pod_container_name"]
+                      target_label  = "container"
+                    }
+
+                    rule {
+                      target_label = "cluster"
+                      replacement  = "{{name}}"
+                    }
+
+                    rule {
+                      target_label = "environment"
+                      replacement  = "{{environment}}"
+                    }
+                  }
+
+                  loki.source.kubernetes "pod_logs" {
+                    targets    = discovery.relabel.pod_logs.output
+                    forward_to = [loki.write.platform.receiver]
+                  }
+
+                  loki.write "platform" {
+                    endpoint {
+                      url = "{{lokiEndpoint}}"
+                    }
+                  }
+      destination:
+        server: '{{server}}'
+        namespace: observability-agents
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+        syncOptions:
+          - CreateNamespace=true
+          - ServerSideApply=true
