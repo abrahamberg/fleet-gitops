@@ -5,19 +5,16 @@ metadata:
   namespace: argocd
 spec:
   generators:
-    - clusters:
-        selector:
-          matchExpressions:
-            - key: environment
-              operator: In
-              values:
-                - dev
-                - prod
+    - git:
+        repoURL: https://github.com/abrahamberg/fleet-gitops.git
+        revision: main
+        files:
+          - path: clusters/*.yaml
   template:
     metadata:
       name: '{{name}}-guestbook'
     spec:
-      project: default
+      project: fleet-platform
       source:
         repoURL: https://github.com/argoproj/argocd-example-apps.git
         targetRevision: HEAD

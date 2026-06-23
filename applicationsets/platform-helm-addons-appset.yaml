@@ -4,6 +4,7 @@ metadata:
   name: platform-helm-addons
   namespace: argocd
 spec:
+  goTemplate: true
   generators:
     - matrix:
         generators:
@@ -20,59 +21,68 @@ spec:
                   repoURL: https://charts.jetstack.io
                   targetRevision: v1.15.3
                   syncWave: "1"
+                  values: |-
+                    installCRDs: true
                 - addon: ingress-nginx
                   namespace: ingress-system
                   chart: ingress-nginx
                   repoURL: https://kubernetes.github.io/ingress-nginx
                   targetRevision: 4.11.2
                   syncWave: "2"
+                  values: ""
                 - addon: external-secrets
                   namespace: external-secrets
                   chart: external-secrets
                   repoURL: https://charts.external-secrets.io
                   targetRevision: 0.10.4
                   syncWave: "3"
+                  values: |-
+                    installCRDs: true
                 - addon: metrics-server
                   namespace: kube-system
                   chart: metrics-server
                   repoURL: https://kubernetes-sigs.github.io/metrics-server
                   targetRevision: 3.12.1
                   syncWave: "3"
+                  values: ""
                 - addon: kube-prometheus-stack
                   namespace: observability
                   chart: kube-prometheus-stack
                   repoURL: https://prometheus-community.github.io/helm-charts
                   targetRevision: 61.7.2
                   syncWave: "4"
+                  values: |-
+                    grafana:
+                      enabled: false
                 - addon: kyverno
                   namespace: kyverno
                   chart: kyverno
                   repoURL: https://kyverno.github.io/kyverno
                   targetRevision: 3.2.6
                   syncWave: "5"
+                  values: ""
   template:
     metadata:
-      name: '{{name}}-{{addon}}'
+      name: '{{ .name }}-{{ .addon }}'
       annotations:
-        argocd.argoproj.io/sync-wave: '{{syncWave}}'
+        argocd.argoproj.io/sync-wave: '{{ .syncWave }}'
       labels:
-        environment: '{{environment}}'
-        platform-addon: '{{addon}}'
-        region: '{{region}}'
+        environment: '{{ .environment }}'
+        platform-addon: '{{ .addon }}'
+        region: '{{ .region }}'
     spec:
-      project: default
+      project: fleet-platform
       source:
-        repoURL: '{{repoURL}}'
-        chart: '{{chart}}'
-        targetRevision: '{{targetRevision}}'
+        repoURL: '{{ .repoURL }}'
+        chart: '{{ .chart }}'
+        targetRevision: '{{ .targetRevision }}'
         helm:
-          releaseName: '{{addon}}'
-          parameters:
-            - name: installCRDs
-              value: "true"
+          releaseName: '{{ .addon }}'
+          values: |-
+            {{ .values | nindent 12 }}
       destination:
-        server: '{{server}}'
-        namespace: '{{namespace}}'
+        server: '{{ .server }}'
+        namespace: '{{ .namespace }}'
       syncPolicy:
         automated:
           prune: true

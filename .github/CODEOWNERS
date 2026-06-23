@@ -1,0 +1,7 @@
+# Require platform review for changes that can affect clusters, policies, or namespace lifecycle.
+/applicationsets/ @platform-team
+/addons/ @platform-team
+/charts/ @platform-team
+/clusters/ @platform-team
+/requests/namespaces/ @platform-team
+/root-app.yaml @platform-team

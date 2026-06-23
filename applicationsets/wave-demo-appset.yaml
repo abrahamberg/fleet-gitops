@@ -17,7 +17,7 @@ spec:
     metadata:
       name: '{{name}}-wave-demo'
     spec:
-      project: default
+      project: fleet-platform
       source:
         repoURL: https://github.com/argoproj/argocd-example-apps.git
         targetRevision: HEAD

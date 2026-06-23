@@ -1,0 +1,32 @@
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: fleet-platform
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "-10"
+spec:
+  description: Multi-cluster GitOps reference architecture for platform add-ons, tenant namespaces, and sample workloads.
+  # Repositories that Applications in this project are allowed to read from.
+  # Listing a repo here does not install anything by itself.
+  sourceRepos:
+    - https://github.com/abrahamberg/fleet-gitops.git
+    - https://github.com/argoproj/argocd-example-apps.git
+    - https://charts.external-secrets.io
+    - https://charts.jetstack.io
+    - https://grafana.github.io/helm-charts
+    - https://kubernetes.github.io/ingress-nginx
+    - https://kubernetes-sigs.github.io/metrics-server
+    - https://kyverno.github.io/kyverno
+    - https://prometheus-community.github.io/helm-charts
+  # Clusters and namespaces this project is allowed to deploy into.
+  # Actual install targets still come from each Application or ApplicationSet destination.
+  destinations:
+    - server: '*'
+      namespace: '*'
+  clusterResourceWhitelist:
+    - group: '*'
+      kind: '*'
+  namespaceResourceWhitelist:
+    - group: '*'
+      kind: '*'

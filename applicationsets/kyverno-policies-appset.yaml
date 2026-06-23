@@ -20,7 +20,7 @@ spec:
         platform-addon: kyverno-policies
         region: '{{region}}'
     spec:
-      project: default
+      project: fleet-platform
       source:
         repoURL: https://github.com/abrahamberg/fleet-gitops.git
         targetRevision: main

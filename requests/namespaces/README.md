@@ -2,6 +2,8 @@
 
 Users create, update, and delete tenant namespaces by opening a pull request against this folder. Use one file per namespace.
 
+Request files should follow `schema.json`. In a production repository, validate this schema in CI before merging namespace changes.
+
 Example:
 
 ```yaml

@@ -5,8 +5,11 @@ metadata:
   namespace: argocd
   annotations:
     argocd.argoproj.io/sync-wave: "10"
+  labels:
+    platform-addon: loki
+    platform-scope: management-cluster
 spec:
-  project: default
+  project: fleet-platform
   source:
     repoURL: https://grafana.github.io/helm-charts
     chart: loki
@@ -57,8 +60,11 @@ metadata:
   namespace: argocd
   annotations:
     argocd.argoproj.io/sync-wave: "11"
+  labels:
+    platform-addon: grafana
+    platform-scope: management-cluster
 spec:
-  project: default
+  project: fleet-platform
   source:
     repoURL: https://grafana.github.io/helm-charts
     chart: grafana

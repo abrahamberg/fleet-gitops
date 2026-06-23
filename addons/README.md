@@ -10,13 +10,13 @@ Included add-ons:
 - `ingress-nginx` for inbound HTTP and HTTPS traffic.
 - `external-secrets` for syncing secrets from external secret stores.
 - `metrics-server` for Kubernetes resource metrics.
-- `kube-prometheus-stack` for observability with Prometheus, Alertmanager, and Grafana.
+- `kube-prometheus-stack` for per-cluster Prometheus and Alertmanager. Grafana is disabled here because central Grafana runs only on the platform cluster.
 - `kyverno` for policy as code.
 - `kyverno-policies` for tenant namespace guardrails generated per environment.
 
 Platform-cluster observability:
 
-- `loki` runs in single-binary mode as a simple central log store for the reference environment.
-- `grafana` runs on the platform cluster and includes a preconfigured Loki datasource.
+- `loki` runs only on the platform cluster in single-binary mode as a simple central log store for the reference environment.
+- `grafana` runs only on the platform cluster and includes a preconfigured Loki datasource.
 
 These chart versions are pinned so the example is reproducible. For a production fleet, review each chart's values, security posture, resource requests, and upgrade notes before enabling automated sync.
