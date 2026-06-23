@@ -14,7 +14,7 @@ spec:
     metadata:
       name: '{{name}}-kyverno-policies'
       annotations:
-        argocd.argoproj.io/sync-wave: "6"
+        argocd.argoproj.io/sync-wave: "7"
       labels:
         environment: '{{environment}}'
         platform-addon: kyverno-policies

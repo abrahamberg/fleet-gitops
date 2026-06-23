@@ -8,6 +8,7 @@ Included add-ons:
 
 - `cert-manager` for certificate lifecycle automation.
 - `ingress-nginx` for inbound HTTP and HTTPS traffic.
+- `argo-rollouts` for progressive delivery with canary and blue-green workload rollouts.
 - `external-secrets` for syncing secrets from external secret stores.
 - `metrics-server` for Kubernetes resource metrics.
 - `kube-prometheus-stack` for per-cluster Prometheus and Alertmanager. Grafana is disabled here because central Grafana runs only on the platform cluster.

@@ -14,7 +14,7 @@ spec:
     metadata:
       name: '{{name}}-observability-agent'
       annotations:
-        argocd.argoproj.io/sync-wave: "8"
+        argocd.argoproj.io/sync-wave: "9"
       labels:
         environment: '{{environment}}'
         platform-addon: observability-agent

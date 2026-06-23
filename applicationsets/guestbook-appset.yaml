@@ -16,9 +16,9 @@ spec:
     spec:
       project: fleet-platform
       source:
-        repoURL: https://github.com/argoproj/argocd-example-apps.git
-        targetRevision: HEAD
-        path: guestbook
+        repoURL: https://github.com/abrahamberg/fleet-gitops.git
+        targetRevision: main
+        path: examples/guestbook-rollout
       destination:
         server: '{{server}}'
         namespace: guestbook

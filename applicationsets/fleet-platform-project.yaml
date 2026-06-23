@@ -11,7 +11,7 @@ spec:
   # Listing a repo here does not install anything by itself.
   sourceRepos:
     - https://github.com/abrahamberg/fleet-gitops.git
-    - https://github.com/argoproj/argocd-example-apps.git
+    - https://argoproj.github.io/argo-helm
     - https://charts.external-secrets.io
     - https://charts.jetstack.io
     - https://grafana.github.io/helm-charts
